@@ -1,6 +1,6 @@
 #pragma once
 
-#include <WebGUI/WebGUI.hpp>
+#include <WebGUI/WebGUI.h>
 
 #include <memory>
 
