@@ -7,7 +7,7 @@
 struct HWND__;
 using HWND = HWND__*;
 
-namespace WebGUI {
+namespace Pure {
 
 class Window {
 public:

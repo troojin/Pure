@@ -1,4 +1,4 @@
-#include "Win32Backend.hpp"
+#include "Win32Backend.h"
 
 #include <commctrl.h>
 #include <filesystem>
@@ -87,10 +87,10 @@ bool Win32Backend::Init(const char* title, int width, int height, MessageCallbac
     window_class.hInstance = GetModuleHandleW(nullptr);
     window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     window_class.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-    window_class.lpszClassName = L"WebGUIWindow";
+    window_class.lpszClassName = L"PureWindow";
     RegisterClassExW(&window_class);
 
-    m_hwnd = CreateWindowExW(0, window_class.lpszClassName, ToWide(title ? title : "WebGUI").c_str(),
+    m_hwnd = CreateWindowExW(0, window_class.lpszClassName, ToWide(title ? title : "Pure").c_str(),
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
         nullptr, nullptr, window_class.hInstance, this);
     if (!m_hwnd) return false;

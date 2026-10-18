@@ -1,9 +1,9 @@
-#include "Context.hpp"
-#include "../platform/win32/Win32Backend.hpp"
+#include "Context.h"
+#include "../platform/win32/Win32Backend.h"
 
 #include <utility>
 
-namespace WebGUI {
+namespace Pure {
 
 Window::Window(const char* title, int width, int height)
     : m_impl(std::make_unique<Impl>(title, width, height)) {}

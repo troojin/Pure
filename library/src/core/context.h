@@ -1,12 +1,12 @@
 #pragma once
 
-#include <WebGUI/WebGUI.h>
+#include <Pure/Pure.h>
 
 #include <memory>
 
 class Win32Backend;
 
-class WebGUI::Window::Impl {
+class Pure::Window::Impl {
 public:
     Impl(const char* title, int width, int height);
 
@@ -24,7 +24,7 @@ private:
     MessageHandler m_handler;
 };
 
-class WebGUI::Context::Impl {
+class Pure::Context::Impl {
 public:
     Impl();
 
