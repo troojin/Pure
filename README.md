@@ -10,19 +10,25 @@ It can also attach an HTML overlay or panel to an existing native window or view
 
 ## Add it to a project
 
-Download a Pure release and place the extracted `Pure/` folder in your project. A release is the contents of [`library/`](library) directly:
+> For a full step-by-step walkthrough showing every file to create and where to put it, see [**USAGE.md**](USAGE.md).
+
+1. Download **`Pure.zip`** from [Releases](https://github.com/troojin/pure/releases) (or copy the [`library/`](library) folder from this repository).
+2. Extract or place it into your project folder as **`Pure/`**:
 
 ```text
 MyApp/
-├── Pure/
+├── Pure/                  <-- Put the downloaded Pure library folder here
 │   ├── include/
 │   ├── src/
 │   ├── web/
 │   └── CMakeLists.txt
 ├── src/
+│   └── main.cpp           <-- Put your C++ code here
 ├── web/
-│   └── index.html
-└── CMakeLists.txt
+│   ├── index.html         <-- Put your HTML/CSS/JS files here
+│   ├── style.css
+│   └── app.js
+└── CMakeLists.txt         <-- Put your root CMakeLists.txt here
 ```
 
 ```cmake
