@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WebGUI embedded debug menu</title>
+    <title>Pure Embedded Debug Menu</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <section class="debug-menu">
-        <header>Debug tools <span>embedded WebGUI</span></header>
-        <label><input id="wireframe" type="checkbox"> Wireframe</label>
+        <header>Debug Tools <span>embedded Pure</span></header>
+        <label><input id="wireframe" type="checkbox"> Wireframe mode</label>
         <label><input id="pause" type="checkbox"> Pause simulation</label>
-        <button id="inspect">Inspect selected object</button>
-        <p id="reply">Ready.</p>
+        <button id="inspect" type="button">Inspect selected object</button>
+        <p id="reply">Mode: Solid | Sim: Running | Inspects: 0</p>
     </section>
     <script src="app.js"></script>
 </body>

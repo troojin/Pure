@@ -1,7 +1,19 @@
+'use strict';
+
 const reply = document.querySelector('#reply');
-document.querySelector('#send').addEventListener('click', () => {
-    window.chrome.webview.postMessage('Hello from JavaScript');
+const payload = document.querySelector('#payload');
+const sendBtn = document.querySelector('#send');
+
+function sendMessage() {
+    const text = payload.value.trim() || 'Hello from JavaScript';
+    window.Pure.send(text);
+}
+
+sendBtn.addEventListener('click', sendMessage);
+payload.addEventListener('keydown', event => {
+    if (event.key === 'Enter') sendMessage();
 });
-window.chrome.webview.addEventListener('message', event => {
-    reply.textContent = event.data;
+
+window.Pure.onMessage(data => {
+    reply.textContent = data;
 });

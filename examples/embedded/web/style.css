@@ -1,8 +1,88 @@
-:root { color-scheme: dark; font-family: system-ui, sans-serif; }
-body { margin: 0; background: transparent; pointer-events: none; }
-.debug-menu { width: 260px; margin: 18px; padding: 14px; border: 1px solid #5d6473; border-radius: 7px; background: rgb(25 28 36 / 92%); box-shadow: 0 8px 24px rgb(0 0 0 / 35%); pointer-events: auto; }
-header { margin-bottom: 12px; font-weight: 700; }
-header span { float: right; color: #94a3b8; font-size: 11px; font-weight: 400; }
-label, button { display: block; margin: 9px 0; }
-button { width: 100%; padding: 7px; }
-#reply { min-height: 1.2em; color: #a5f3fc; font-size: 13px; }
+:root {
+    color-scheme: dark;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+    user-select: none;
+}
+
+.debug-menu {
+    width: 280px;
+    margin: 20px;
+    padding: 16px;
+    border: 1px solid #2e3440;
+    border-radius: 8px;
+    background: rgb(18 20 26 / 94%);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+    pointer-events: auto;
+    color: #e4e6eb;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #262b36;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+header span {
+    color: #38bdf8;
+    font: 600 11px/1 ui-monospace, "Cascadia Code", Consolas, monospace;
+    text-transform: uppercase;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: #cbd5e1;
+    cursor: pointer;
+}
+
+button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 12px;
+    font: 500 13px/1.2 inherit;
+    color: #082f49;
+    background: #38bdf8;
+    border: 1px solid #38bdf8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 120ms ease-out;
+}
+
+button:hover {
+    background: #7dd3fc;
+}
+
+button:active {
+    background: #0ea5e9;
+}
+
+#reply {
+    margin: 12px 0 0;
+    padding: 8px 10px;
+    background: #121318;
+    border: 1px solid #222630;
+    border-radius: 6px;
+    min-height: 1.4em;
+    color: #93c5fd;
+    font: 12px/1.4 ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button {
+        transition: none;
+    }
+}

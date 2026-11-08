@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: package library
         shell: pwsh
-        run: Compress-Archive -Path library\* -DestinationPath WebGUI.zip
+        run: Compress-Archive -Path library\* -DestinationPath Pure.zip
       - name: upload release archive
         uses: softprops/action-gh-release@v2
         with:
-          files: WebGUI.zip
+          files: Pure.zip

@@ -1,17 +1,19 @@
-#include <WebGUI/WebGUI.hpp>
+#include <Pure/Pure.h>
 
 #include <iostream>
 
 int main() {
-    WebGUI::Window window("WebGUI", 1024, 768);
+    Pure::Window window("Pure", 1024, 768);
     if (!window.valid() || !window.load("web/index.html")) {
-        std::cerr << "Failed to create WebGUI window.\n";
+        std::cerr << "Failed to create Pure window.\n";
         return 1;
     }
 
-    window.on_message([&window](const std::string& message) {
+    int count = 0;
+    window.on_message([&window, &count](const std::string& message) {
+        ++count;
         std::cout << "JavaScript: " << message << '\n';
-        window.post_message("Message received by C++.");
+        window.post_message("C++ acknowledged message #" + std::to_string(count) + ": " + message);
     });
     window.show();
     window.run();

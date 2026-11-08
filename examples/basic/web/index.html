@@ -1,8 +1,29 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>WebGUI</title><link rel="stylesheet" href="style.css"></head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-  <main><h1>WebGUI</h1><p>HTML, CSS, and JavaScript are your UI.</p><button id="send">Send message</button><p id="reply"></p></main>
-  <script src="app.js"></script>
+    <main class="shell">
+        <header class="header">
+            <span class="tag">Pure C++17</span>
+            <h1>Native Window, Web Interface</h1>
+            <p class="lead">HTML, CSS, and JavaScript rendered natively with direct two-way C++ messaging.</p>
+        </header>
+        <section class="panel">
+            <div class="controls">
+                <input id="payload" type="text" value="Hello from JavaScript" aria-label="Message payload">
+                <button id="send" type="button">Send to C++</button>
+            </div>
+            <div class="log-box">
+                <span class="log-label">C++ Response</span>
+                <output id="reply">Waiting for message...</output>
+            </div>
+        </section>
+    </main>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,8 +1,12 @@
 # Pure
 
-Pure is a small C++ library for native Windows applications with HTML, CSS, and JavaScript user interfaces. It owns the Win32 and WebView2 setup so an application only needs to create a window, load a page, and run it.
+Pure is a lightweight, cross-platform C++17 library for native desktop applications with HTML, CSS, and JavaScript user interfaces. It manages the native window and platform webview engine so an application only needs to create a window, load a page, and run it:
 
-It can also attach the same HTML UI to an HWND that your application already owns. This is useful for debug menus, inspectors, consoles, and developer overlays; Pure supplies WebView2 integration, while HTML, CSS, and JavaScript remain the UI layer.
+- **Windows**: Win32 + Microsoft Edge WebView2
+- **macOS**: Cocoa (`NSWindow` / `NSView`) + WebKit (`WKWebView`)
+- **Linux**: GTK 3 (`GtkWindow` / `GtkWidget`) + WebKitGTK (`webkit2gtk`)
+
+It can also attach an HTML overlay or panel to an existing native window or view owned by your application (`HWND`, `NSWindow*` / `NSView*`, or `GtkWidget*`). This is ideal for debug menus, inspectors, consoles, and developer overlays.
 
 ## Add it to a project
 
@@ -32,7 +36,7 @@ target_link_libraries(MyApp PRIVATE Pure::Pure)
 Pure_copy_runtime(MyApp)
 ```
 
-`Pure_copy_runtime()` places `WebView2Loader.dll` beside the executable. On the first configure, CMake downloads the WebView2 SDK automatically. Your users need the [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/), which is included with current Windows 11 and Microsoft Edge installations.
+On Windows, `Pure_copy_runtime()` places `WebView2Loader.dll` beside the executable and CMake downloads the WebView2 SDK automatically on the first configure. On macOS and Linux, `Pure_copy_runtime()` is a no-op so your `CMakeLists.txt` stays identical across platforms.
 
 ## Quick start
 
@@ -41,7 +45,7 @@ Pure_copy_runtime(MyApp)
 #include <iostream>
 
 int main() {
-    Pure::Window window("My App", 800, 600);
+    Pure::Window window("My App", 1024, 768);
     if (!window.valid() || !window.load("web/index.html")) {
         return 1;
     }
@@ -56,61 +60,65 @@ int main() {
 }
 ```
 
-`load()` accepts an absolute path or a path relative to the process working directory. Pure maps the page's containing directory, so its relative HTML, CSS, JavaScript, image, and font paths work normally. It does not copy or modify your web files.
+`load()` accepts a local file path (absolute, relative to the working directory, or relative to the executable directory) as well as URLs (`https://`, `http://`, `file://`, `data:`). For local files, Pure automatically maps the containing directory so relative CSS, JavaScript, image, and font paths resolve cleanly. `load_html()` is also available to load raw HTML strings directly.
 
 ## C++ and JavaScript messages
 
-Send a string from JavaScript with WebView2's built-in bridge:
+Pure automatically injects the `window.Pure` bridge into every page across Windows, macOS, and Linux:
 
 ```js
-window.chrome.webview.postMessage('save');
+window.Pure.send('save');
 
-window.chrome.webview.addEventListener('message', event => {
-    console.log('C++ says:', event.data);
+window.Pure.onMessage(data => {
+    console.log('C++ says:', data);
 });
 ```
 
-C++ receives the string supplied by `postMessage()` through `on_message()` and sends one with `post_message()`. Use JSON when structured messages are useful; Pure intentionally leaves the message format to your application.
+For compatibility with existing WebView2 code, `window.chrome.webview.postMessage()` and `window.chrome.webview.addEventListener('message', ...)` are also supported across all three platforms.
 
-`execute_script()` is also available for one-off C++-initiated JavaScript:
+`execute_script()` is available for one-off C++-initiated JavaScript:
 
 ```cpp
 window.execute_script("document.body.classList.add('ready')");
 ```
 
-## Embed in an existing Win32 window
+## Embed in an existing native window
 
-`Context` does not create or own the host HWND. Attach it after creating the host window, then keep dispatching the application's normal Win32 message loop. Pure subclasses the host only to track size changes, and removes that subclass when the context is destroyed or closed. Mouse and keyboard input are handled by the WebView2 child window in the normal Win32 input route.
+`Context` does not create or destroy the host window. Attach it to your existing native handle (`HWND` on Windows, `NSWindow*` or `NSView*` on macOS, `GtkWidget*` or `GtkOverlay*` on Linux):
 
 ```cpp
 Pure::Context gui;
-if (!gui.attach(host_hwnd) || !gui.load("web/debug-menu.html")) {
+if (!gui.attach(host_window) || !gui.load("web/debug-menu.html")) {
     return 1;
 }
 ```
 
-`attach(hwnd)` enables a transparent WebView2 background by default so CSS can place panels over the host application. Use `attach(hwnd, false)` for an opaque embedded page. Make the document background transparent and give each panel its own opaque or translucent CSS background. The [`embedded` example](examples/embedded) demonstrates this with a small HTML debug menu and several independent controls.
+`attach(window)` enables a transparent webview background by default so CSS can place floating panels over the host application. Pass `attach(window, false)` for an opaque embedded page. See the [`embedded` example](examples/embedded) for a working demonstration.
 
 ## API
 
 | Method | Purpose |
 | --- | --- |
-| `Window(title, width, height)` | Creates a native window and WebView2 instance. |
+| `Window(title, width, height)` | Creates a native window and platform webview instance. |
 | `valid()` | Reports whether initialization succeeded. |
-| `load(path)` | Loads an HTML file and maps its folder for assets. |
-| `show()` | Makes the native window visible. |
-| `poll_events()` | Processes pending window and WebView2 events; returns `false` after close. |
+| `load(path_or_url)` | Loads an HTML file (mapping its folder for assets) or URL. |
+| `load_html(html)` | Loads an HTML document directly from a string. |
+| `show()` | Makes the native window visible and focuses it. |
+| `poll_events()` | Processes pending window and webview events; returns `false` after close. |
 | `run()` | Runs the event loop until the window closes. |
-| `close()` | Closes the window. |
-| `on_message(handler)` | Sets the JavaScript-to-C++ message handler. |
-| `post_message(message)` | Sends a string to JavaScript. |
-| `execute_script(script)` | Runs JavaScript in the loaded page. |
-| `Context::attach(hwnd, transparent)` | Attaches WebView2 to an existing HWND; Pure does not destroy that HWND. |
-| `Context::poll_events()` / `Context::run()` | Optional message-loop helpers for an embedded host. Existing applications normally use their own loop. |
+| `close()` | Closes the window or detaches the embedded context. |
+| `set_title(title)` | Updates the native window title. |
+| `set_size(width, height)` | Resizes the window client area. |
+| `native_handle()` | Returns the underlying `HWND`, `NSWindow*`/`NSView*`, or `GtkWidget*`. |
+| `on_message(handler)` | Sets the JavaScript-to-C++ message callback. |
+| `post_message(message)` | Sends a string message to JavaScript. |
+| `execute_script(script)` | Evaluates JavaScript in the current page. |
+| `Context::attach(window, transparent)` | Attaches Pure to an existing native window/view without taking ownership. |
+| `Context::poll_events()` / `Context::run()` | Optional event-loop helpers for an embedded host. |
 
 ## Requirements
 
-- Windows 10 or 11, x64
-- CMake 3.24 or newer
-- Visual Studio 2019 or newer with C++17 support
-- Internet access for the first CMake configure
+- **All platforms**: CMake 3.24+ and a C++17 compiler
+- **Windows**: Windows 10 or 11 (64-bit), Visual Studio 2019+ or Clang/MSVC, WebView2 Runtime
+- **macOS**: macOS 11+, Xcode / Apple Clang (`Cocoa` and `WebKit` system frameworks)
+- **Linux**: GCC or Clang, `pkg-config`, `gtk+-3.0`, and `webkit2gtk-4.1` (or `webkit2gtk-4.0`)
